@@ -40,7 +40,7 @@ def save_data_to_json(storage: Storage, file_path: str) -> None:
         json.dump({'shorts': storage.shorts, 'pseudonyms': storage.pseudonyms}, file, ensure_ascii=False)
 
 
-def load_data_from_json(file_path) -> Storage:
+def load_data_from_json(file_path: str) -> Storage:
     if not os.path.exists(file_path):
         return Storage()
     with open(file_path, mode='r', encoding='utf-8') as file:
