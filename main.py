@@ -1,5 +1,9 @@
+
+import logging
+from json import JSONDecodeError
+
 from common import exceptions, messages
-from common.settings import DATA_FILE_PATH
+from common.settings import DATA_FILE_PATH, LOG_FILE_PATH
 from common.utils.regex import shorten_url, get_domain, get_homepage
 from common.utils.storage import load_data_from_json, Storage, save_data_to_json
 from common.utils.url_request import get_response_code_url
@@ -7,11 +11,27 @@ from common.utils.url_request import get_response_code_url
 
 def main():
     """Function that launches the application"""
-    storage = load_data_from_json(DATA_FILE_PATH)
+    config_logging()
+
+    try:
+        storage = load_data_from_json(DATA_FILE_PATH)
+    except JSONDecodeError as e:
+        logging.critical(str(e), stack_info=True)
+        print(messages.JSON_FILE_ERROR.format(DATA_FILE_PATH))
+        return
 
     run_app = True
     while run_app:
         run_app = choice_options(storage)
+
+
+def config_logging() -> None:
+    logging.basicConfig(
+        filename=LOG_FILE_PATH,
+        format='%(asctime)s, %(levelname)s, %(filename)s, Message: %(message)s',
+        datefmt='%Y/%m/%d %H:%M:%S',
+        level=logging.INFO,
+    )
 
 
 def choice_options(storage: Storage):
@@ -44,11 +64,14 @@ def reduce_url(storage: Storage):
         pseudonym = get_domain(url)
         home_page = get_homepage(url)
     except exceptions.InvalidUrl as e:
+        logging.info(str(e))
         print(messages.INVALID_URL_ERROR)
         return
+
     try:
         short_url = shorten_url(url)
     except exceptions.UrlDomainTooShort as e:
+        logging.info(str(e))
         print(messages.DOMAIN_TOO_SHORT_ERROR)
         return
     storage.add_pseudonym(pseudonym, home_page)
@@ -94,6 +117,7 @@ def get_all_data(storage: Storage):
 
 def stop_app(storage: Storage):
     print(messages.STOP_APP)
+    logging.info('Stop app and save file to database')
     save_data_to_json(storage, DATA_FILE_PATH)
 
 
