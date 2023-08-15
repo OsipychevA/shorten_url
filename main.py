@@ -35,6 +35,7 @@ def config_logging() -> None:
 
 
 def choice_options(storage: Storage):
+    logging.info('The "choise_options" function is running')
     selection_options = {
         1: (messages.MENU_REDUCE_URL, reduce_url, True),
         2: (messages.MENU_GET_HOMEPAGE_BY_PSEUDONYM, get_homepage_by_pseudonym, True),
@@ -59,6 +60,7 @@ def choice_options(storage: Storage):
 
 
 def reduce_url(storage: Storage):
+    logging.info('The "reduce_url" function is running')
     url = input(messages.REGISTER_URL_INPUT)
     try:
         pseudonym = get_domain(url)
@@ -82,6 +84,7 @@ def reduce_url(storage: Storage):
 
 
 def get_homepage_by_pseudonym(storage: Storage):
+    logging.info('The "get_homepage_by_pseudonym" function is running')
     pseudonym = input(messages.PSEUDONYM_INPUT)
     if storage.has_pseudonym(pseudonym):
         home_page = storage.get_homepage_url(pseudonym)
@@ -89,11 +92,14 @@ def get_homepage_by_pseudonym(storage: Storage):
         print(messages.URL_OUTPUT.format(home_page))
         print(messages.PSEUDONYM_OUTPUT.format(pseudonym))
         print(messages.RESPONSE_CODE_OUTPUT.format(response_code))
+        logging.info('Data successfully found')
     else:
         print(messages.PSEUDONYM_NOT_FOUND)
+        logging.info('Pseudonym not found')
 
 
 def get_full_url_by_short(storage: Storage):
+    logging.info('The "get_full_url_by_short" function is running')
     short_url = input(messages.SHORT_URL_INPUT)
     if storage.has_short(short_url):
         full_url = storage.get_full_url(short_url)
@@ -101,11 +107,14 @@ def get_full_url_by_short(storage: Storage):
         print(messages.URL_OUTPUT.format(full_url))
         print(messages.SHORT_URL_OUTPUT.format(short_url))
         print(messages.RESPONSE_CODE_OUTPUT.format(response_code))
+        logging.info('Data successfully found')
     else:
         print(messages.SHORT_URL_NOT_FOUND)
+        logging.info('Short url not found')
 
 
 def get_all_data(storage: Storage):
+    logging.info('The "get_all_data" function is running')
     print(messages.PSEUDONYM_LIST_LABEL)
     for item in storage.pseudonyms.items():
         print(item)
@@ -119,6 +128,7 @@ def stop_app(storage: Storage):
     print(messages.STOP_APP)
     logging.info('Stop app and save file to database')
     save_data_to_json(storage, DATA_FILE_PATH)
+    logging.info('File with data successfully save to database')
 
 
 if __name__ == '__main__':
